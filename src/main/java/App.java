@@ -14,7 +14,7 @@ public class App extends Application
     @Override
     public void start(Stage stage) 
     {
-        stage.setTitle("Example App (JavaFX)");
+        stage.setTitle("Robot Rubmle");
         JFXArena arena = new JFXArena();
         arena.addListener((x, y) ->
         {
