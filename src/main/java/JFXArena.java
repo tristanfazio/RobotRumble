@@ -19,10 +19,8 @@ public class JFXArena extends Pane
     
     // The following values are arbitrary, and you may need to modify them according to the 
     // requirements of your application.
-    private int gridWidth = 9;
-    private int gridHeight = 9;
-    private double robotX = 1.0;
-    private double robotY = 3.0;
+    private int gridWidth;
+    private int gridHeight;
 
     private double gridSquareSize; // Auto-calculated
     private Canvas canvas; // Used to provide a 'drawing surface'.
@@ -32,8 +30,10 @@ public class JFXArena extends Pane
     /**
      * Creates a new arena object, loading the robot image and initialising a drawing surface.
      */
-    public JFXArena()
+    public JFXArena(int gridWidth,int gridHeight)
     {
+        this.gridWidth = gridWidth;
+        this.gridHeight = gridHeight;
         // Here's how you get an Image object from an image file (which you provide in the 
         // 'resources/' directory).
         
@@ -57,8 +57,6 @@ public class JFXArena extends Pane
      */
     public void setRobotPosition(double x, double y)
     {
-        robotX = x;
-        robotY = y;
         requestLayout();
     }
     
@@ -133,8 +131,8 @@ public class JFXArena extends Pane
 
         // Invoke helper methods to draw things at the current location.
         // ** You will need to adapt this to the requirements of your application. **
-        drawImage(gfx, robot1, robotX, robotY);
-        drawLabel(gfx, "Robot Name", robotX, robotY);
+//        drawImage(gfx, robot1, robotX, robotY);
+//        drawLabel(gfx, "models.Robot Name", robotX, robotY);
     }
     
     

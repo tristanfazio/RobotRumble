@@ -14,31 +14,34 @@ public class App extends Application
     @Override
     public void start(Stage stage) 
     {
-        stage.setTitle("Robot Rubmle");
-        JFXArena arena = new JFXArena();
+        stage.setTitle("Robot Rumble");
+        int spawnTimer = 2000;
+        int gridWidth = 9;
+        int gridHeight = 9;
+        JFXArena arena = new JFXArena(gridWidth,gridHeight);
+        TextArea textArea = new TextArea();
+        Logger logger = new Logger(textArea);
+        ToolBar toolbar = new ToolBar();
+        GameEngine gameEngine = new GameEngine(logger, spawnTimer, gridWidth, gridHeight);
+
         arena.addListener((x, y) ->
         {
             System.out.println("Arena click at (" + x + "," + y + ")");
         });
-        
-        ToolBar toolbar = new ToolBar();
-//         Button btn1 = new Button("My Button 1");
-//         Button btn2 = new Button("My Button 2");
+
         Label label = new Label("Score: 999");
-//         toolbar.getItems().addAll(btn1, btn2, label);
-        toolbar.getItems().addAll(label);
-        
-//         btn1.setOnAction((event) ->
-//         {
-//             System.out.println("Button 1 pressed");
-//         });
-                    
-        TextArea logger = new TextArea();
-        logger.appendText("Hello\n");
-        logger.appendText("World\n");
-        
+        Button startButton = new Button("Start Game");
+
+        startButton.setOnAction((event) ->
+        {
+            logger.log("Starting Game");
+            gameEngine.startGame();
+        });
+
+        toolbar.getItems().addAll(label, startButton);
+
         SplitPane splitPane = new SplitPane();
-        splitPane.getItems().addAll(arena, logger);
+        splitPane.getItems().addAll(arena, textArea);
         arena.setMinWidth(300.0);
         
         BorderPane contentPane = new BorderPane();
