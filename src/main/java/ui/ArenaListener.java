@@ -1,3 +1,5 @@
+package ui;
+
 /**
  * Represents an event handler for when the arena is clicked.
  */

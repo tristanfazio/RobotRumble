@@ -1,5 +1,5 @@
-import models.GameMap;
-import models.GridPosition;
+package game;
+
 import models.Robot;
 
 import java.util.concurrent.SynchronousQueue;
@@ -7,10 +7,8 @@ import java.util.concurrent.SynchronousQueue;
 public class RobotFactory implements Runnable{
     private SynchronousQueue<Robot> queue = new SynchronousQueue<>();
     private int idCounter = 1;
-    GameMap gameMap;
 
-    public RobotFactory(GameMap gameMap){
-        this.gameMap = gameMap;
+    public RobotFactory(){
     }
     @Override
     public void run() {
@@ -19,7 +17,7 @@ public class RobotFactory implements Runnable{
             {
                 //Produce Robots
                 int robotId = idCounter;
-                Robot robot = new Robot(robotId, gameMap);
+                Robot robot = new Robot(String.valueOf(robotId));
 
                 queue.put(robot);
                 idCounter++;

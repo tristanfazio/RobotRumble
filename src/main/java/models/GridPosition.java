@@ -11,4 +11,17 @@ public class GridPosition {
         this.gridX = gridX;
         this.gridY = gridY;
     }
+
+    public int getGridX() {
+        return gridX;
+    }
+
+    public int getGridY() {
+        return gridY;
+    }
+
+    @Override
+    public String toString() {
+        return "("+gridX+","+gridY+")";
+    }
 }

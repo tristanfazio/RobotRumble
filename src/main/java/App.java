@@ -1,8 +1,13 @@
+import game.GameEngine;
+import game.GameState;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import game.GameMap;
+import ui.JFXArena;
+import ui.Logger;
 
 public class App extends Application 
 {
@@ -15,14 +20,16 @@ public class App extends Application
     public void start(Stage stage) 
     {
         stage.setTitle("Robot Rumble");
-        int spawnTimer = 2000;
-        int gridWidth = 9;
-        int gridHeight = 9;
-        JFXArena arena = new JFXArena(gridWidth,gridHeight);
+        int SPAWNTIMER = 2000;
+        int GRIDWIDTH = 9;
+        int GRIDHEIGHT = 9;
+        ToolBar toolbar = new ToolBar();
+        JFXArena arena = new JFXArena(GRIDWIDTH,GRIDHEIGHT);
         TextArea textArea = new TextArea();
         Logger logger = new Logger(textArea);
-        ToolBar toolbar = new ToolBar();
-        GameEngine gameEngine = new GameEngine(logger, spawnTimer, gridWidth, gridHeight);
+        GameMap gameMap = new GameMap(GRIDWIDTH, GRIDHEIGHT);
+        GameState gameState = new GameState(gameMap,arena);
+        GameEngine gameEngine = new GameEngine(gameState,logger,SPAWNTIMER);
 
         arena.addListener((x, y) ->
         {

@@ -1,22 +1,24 @@
 package models;
 
+import game.GameMap;
+import game.GameState;
+
 public class Robot {
     private final int MAX_MOVE_DELAY = 2000;
     private final int MIN_MOVE_DELAY = 500;
 
-    private final int robotId;
+    private final String robotId;
     private final int delay;
     private GridPosition gridPosition;
-    GameMap gameMap;
+    GameState gameState;
 
-    public Robot(int robotId, GameMap gameMap) {
+    public Robot(String robotId) {
         this.robotId = robotId;
         this.delay = getRandomDelay();
-        this.gameMap = gameMap;
         this.gridPosition = new GridPosition();
     }
 
-    public int getRobotId() {
+    public String getRobotId() {
         return robotId;
     }
 
@@ -41,6 +43,6 @@ public class Robot {
 
     @Override
     public String toString() {
-        return "Robot[robotId:"+robotId+", delay:"+ delay+",grid position:("+gridPosition.gridX+","+gridPosition.gridY+")]";
+        return "Robot{robotId["+robotId+"], delay["+ delay+"], gridPosition:["+gridPosition.toString()+"]}";
     }
 }

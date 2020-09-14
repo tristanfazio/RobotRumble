@@ -1,3 +1,5 @@
+package ui;
+
 import javafx.scene.control.TextArea;
 
 public class Logger {

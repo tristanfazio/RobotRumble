@@ -1,9 +1,12 @@
+package ui;
+
 import javafx.scene.canvas.*;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import models.Robot;
 
 import java.io.InputStream;
 import java.util.*;
@@ -15,7 +18,8 @@ public class JFXArena extends Pane
 {
     // Represents the image to draw. You can modify this to introduce multiple images.
     private static final String IMAGE_FILE = "1554047213.png";
-    private Image robot1;
+    private Image robotImage;
+    HashMap<String,Robot> robotRepo;
     
     // The following values are arbitrary, and you may need to modify them according to the 
     // requirements of your application.
@@ -34,6 +38,7 @@ public class JFXArena extends Pane
     {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
+        robotRepo = new HashMap<>();
         // Here's how you get an Image object from an image file (which you provide in the 
         // 'resources/' directory).
         
@@ -42,7 +47,7 @@ public class JFXArena extends Pane
         {
             throw new AssertionError("Cannot find image file " + IMAGE_FILE);
         }
-        robot1 = new Image(is);
+        robotImage = new Image(is);
         
         canvas = new Canvas();
         canvas.widthProperty().bind(widthProperty());
@@ -62,7 +67,7 @@ public class JFXArena extends Pane
     
     /**
      * Adds a callback for when the user clicks on a grid square within the arena. The callback 
-     * (of type ArenaListener) receives the grid (x,y) coordinates as parameters to the 
+     * (of type ui.ArenaListener) receives the grid (x,y) coordinates as parameters to the
      * 'squareClicked()' method.
      */
     public void addListener(ArenaListener newListener)
@@ -131,8 +136,14 @@ public class JFXArena extends Pane
 
         // Invoke helper methods to draw things at the current location.
         // ** You will need to adapt this to the requirements of your application. **
-//        drawImage(gfx, robot1, robotX, robotY);
-//        drawLabel(gfx, "models.Robot Name", robotX, robotY);
+        for (Map.Entry<String, Robot> entry : robotRepo.entrySet()) {
+            Robot robot = entry.getValue();
+            String robotId = robot.getRobotId();
+            int robotX = robot.gridPosition().getGridX();
+            int robotY = robot.gridPosition().getGridY();
+            drawImage(gfx,robotImage,robotX ,robotY);
+            drawLabel(gfx,robotId,robotX,robotY);
+        }
     }
     
     
@@ -153,8 +164,8 @@ public class JFXArena extends Pane
         // We also need to know how "big" to make the image. The image file has a natural width 
         // and height, but that's not necessarily the size we want to draw it on the screen. We 
         // do, however, want to preserve its aspect ratio.
-        double fullSizePixelWidth = robot1.getWidth();
-        double fullSizePixelHeight = robot1.getHeight();
+        double fullSizePixelWidth = robotImage.getWidth();
+        double fullSizePixelHeight = robotImage.getHeight();
         
         double displayedPixelWidth, displayedPixelHeight;
         if(fullSizePixelWidth > fullSizePixelHeight)
@@ -217,5 +228,10 @@ public class JFXArena extends Pane
                        (clippedGridY1 + 0.5) * gridSquareSize, 
                        (gridX2 + 0.5) * gridSquareSize, 
                        (gridY2 + 0.5) * gridSquareSize);
+    }
+
+    public void updateRobotInfo(HashMap<String,Robot> robotRepo) {
+        this.robotRepo = robotRepo;
+        layoutChildren();
     }
 }
