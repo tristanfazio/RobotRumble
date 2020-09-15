@@ -72,7 +72,7 @@ public class Robot implements Runnable{
     @Override
     public void run() {
         try {
-            while(isAlive())
+            while(isAlive() && !gameState.isGameFinished())
             {
                 Thread.sleep(getDelay());
                 attemptMove();

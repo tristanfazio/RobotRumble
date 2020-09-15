@@ -6,6 +6,7 @@ import models.GridPosition;
 import models.Robot;
 import ui.JFXArena;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -16,6 +17,7 @@ public class GameMap {
     private final GridPosition TOP_RIGHT;
     private final GridPosition BOTTOM_LEFT;
     private final GridPosition BOTTOM_RIGHT;
+    private final GridPosition CENTRE;
     private final int gridWidth;
     private final int gridHeight;
 
@@ -27,6 +29,7 @@ public class GameMap {
         TOP_RIGHT = new GridPosition(gridWidth-1,0);
         BOTTOM_LEFT = new GridPosition(0,gridHeight-1);
         BOTTOM_RIGHT = new GridPosition(gridWidth-1, gridHeight-1);
+        CENTRE = new GridPosition(gridWidth/2,gridHeight/2);
 
         //instantiate map with empty cells
         for(int row = 0;row<gridWidth;row++) {
@@ -115,6 +118,10 @@ public class GameMap {
         int gridPositionX = oldPosition.getGridX();
         int gridPositionY = oldPosition.getGridY();
         gameMap[gridPositionX][gridPositionY].unOccupy();
+    }
+
+    public boolean isCentralSquareOccupied() {
+        return isPositionOccupied(CENTRE);
     }
 }
 

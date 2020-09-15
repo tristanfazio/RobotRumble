@@ -7,6 +7,7 @@ import ui.JFXArena;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.SynchronousQueue;
 
 public class GameState {
     private boolean isGameFinished;
@@ -14,12 +15,16 @@ public class GameState {
     private final HashMap<String, Robot> robotRepo;
     JFXArena arena;
     final Object lock = new Object();
+    private SynchronousQueue<Boolean> endGameNotificationQueue = new SynchronousQueue<>();
 
     public GameState(GameMap gameMap, JFXArena arena){
         this.isGameFinished = false;
         this.gameMap = gameMap;
         robotRepo = new HashMap<>();
         this.arena = arena;
+    }
+    public void attachQueue(SynchronousQueue<Boolean> notificationQueue) {
+        this.endGameNotificationQueue = notificationQueue;
     }
 
     public boolean isGameFinished() {
@@ -58,6 +63,21 @@ public class GameState {
             updateRobotRepo(robot);
             //unOccupy old position
             gameMap.moveRobotOutOfOldPosition(oldPosition);
+            //checkLose
+            checkLoseCondition();
+        }
+    }
+
+    private void checkLoseCondition() {
+        synchronized (lock) {
+            if(gameMap.isCentralSquareOccupied()) {
+                isGameFinished = true;
+                try {
+                    endGameNotificationQueue.put(Boolean.TRUE);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
