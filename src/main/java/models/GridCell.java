@@ -23,5 +23,6 @@ public class GridCell {
 
     public void unOccupy() {
         occupied = false;
+        robot = null;
     }
 }

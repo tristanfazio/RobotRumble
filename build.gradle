@@ -13,6 +13,7 @@ repositories {
 javafx {
     version = "11.0.2"
     modules = [ 'javafx.controls' ]
+    sdk = System.getenv('PATH_TO_FX')
 }
 
 application {

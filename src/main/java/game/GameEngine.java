@@ -35,7 +35,9 @@ public class GameEngine {
                     GridPosition nextValidSpawn = gameState.getNextRandomSpawnPosition();
                     Robot robot = robotFactory.getNextRobot();
                     robot.setGridPosition(nextValidSpawn);
+                    robot.attachGameState(gameState);
                     gameState.spawnRobot(robot);
+                    executor.execute(robot);
                 }
             }
         } catch (InterruptedException e) {

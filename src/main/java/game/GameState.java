@@ -5,6 +5,7 @@ import models.GridPosition;
 import models.Robot;
 import ui.JFXArena;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameState {
@@ -43,6 +44,26 @@ public class GameState {
         synchronized (lock) {
             gameMap.moveRobotIntoPosition(robot);
             updateRobotRepo(robot);
+        }
+    }
+
+    public void handleRobotMovementToNewPosition(Robot robot, GridPosition newGridPosition) {
+        synchronized (lock) {
+            //get old position out of robot
+            GridPosition oldPosition = robot.gridPosition();
+            //set new position to occupied
+            robot.setGridPosition(newGridPosition);
+            gameMap.moveRobotIntoPosition(robot);
+            //update visuals with movement
+            updateRobotRepo(robot);
+            //unOccupy old position
+            gameMap.moveRobotOutOfOldPosition(oldPosition);
+        }
+    }
+
+    public ArrayList<GridPosition> getValidMoveListFromPosition(GridPosition gridPosition) {
+        synchronized (lock) {
+            return gameMap.getValidMoveListFromPosition(gridPosition);
         }
     }
 
