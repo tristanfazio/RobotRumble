@@ -36,7 +36,7 @@ public class UI extends Application
             System.out.println("Arena click at (" + x + "," + y + ")");
         });
 
-        Label label = new Label("Score: 999");
+        Label label = new Label("Score: 0");
         Button startButton = new Button("Start Game");
 
         startButton.setOnAction((event) ->

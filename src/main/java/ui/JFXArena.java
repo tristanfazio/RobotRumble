@@ -17,14 +17,18 @@ import java.util.*;
 public class JFXArena extends Pane
 {
     // Represents the image to draw. You can modify this to introduce multiple images.
-    private static final String IMAGE_FILE = "1554047213.png";
+    private static final String ROBOT_IMAGE_FILE = "1554047213.png";
+    private static final String CITY_IMAGE_FILE = "ville.png";
     private Image robotImage;
+    private Image cityImage;
     HashMap<String,Robot> robotRepo;
     
     // The following values are arbitrary, and you may need to modify them according to the 
     // requirements of your application.
     private int gridWidth;
     private int gridHeight;
+    private int centreX;
+    private int centreY;
 
     private double gridSquareSize; // Auto-calculated
     private Canvas canvas; // Used to provide a 'drawing surface'.
@@ -38,16 +42,25 @@ public class JFXArena extends Pane
     {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
+        centreX = gridWidth/2;
+        centreY = gridHeight/2;
+
         robotRepo = new HashMap<>();
         // Here's how you get an Image object from an image file (which you provide in the 
         // 'resources/' directory).
         
-        InputStream is = getClass().getClassLoader().getResourceAsStream(IMAGE_FILE);
+        InputStream is = getClass().getClassLoader().getResourceAsStream(ROBOT_IMAGE_FILE);
         if(is == null)
         {
-            throw new AssertionError("Cannot find image file " + IMAGE_FILE);
+            throw new AssertionError("Cannot find image file " + ROBOT_IMAGE_FILE);
         }
         robotImage = new Image(is);
+        is = getClass().getClassLoader().getResourceAsStream(CITY_IMAGE_FILE);
+        if(is == null)
+        {
+            throw new AssertionError("Cannot find image file " + CITY_IMAGE_FILE);
+        }
+        cityImage = new Image(is);
         
         canvas = new Canvas();
         canvas.widthProperty().bind(widthProperty());
@@ -144,6 +157,7 @@ public class JFXArena extends Pane
             drawImage(gfx,robotImage,robotX ,robotY);
             drawLabel(gfx,robotId,robotX,robotY);
         }
+        drawImage(gfx,cityImage,centreX,centreY);
     }
     
     
@@ -164,8 +178,8 @@ public class JFXArena extends Pane
         // We also need to know how "big" to make the image. The image file has a natural width 
         // and height, but that's not necessarily the size we want to draw it on the screen. We 
         // do, however, want to preserve its aspect ratio.
-        double fullSizePixelWidth = robotImage.getWidth();
-        double fullSizePixelHeight = robotImage.getHeight();
+        double fullSizePixelWidth = image.getWidth();
+        double fullSizePixelHeight = image.getHeight();
         
         double displayedPixelWidth, displayedPixelHeight;
         if(fullSizePixelWidth > fullSizePixelHeight)
@@ -176,12 +190,17 @@ public class JFXArena extends Pane
             displayedPixelWidth = gridSquareSize;
             displayedPixelHeight = gridSquareSize * fullSizePixelHeight / fullSizePixelWidth;
         }
-        else
+        else if(fullSizePixelWidth < fullSizePixelHeight)
         {
             // Otherwise, it's the other way around -- full height, and width is set to 
             // preserve the aspect ratio.
             displayedPixelHeight = gridSquareSize;
             displayedPixelWidth = gridSquareSize * fullSizePixelWidth / fullSizePixelHeight;
+        }
+        else {
+            //it's a perfect square, make it the full size of a grid minus a tiny amount for border visibility
+            displayedPixelHeight = gridSquareSize - image.getHeight()*0.005;
+            displayedPixelWidth = gridSquareSize - image.getWidth()*0.005;
         }
 
         // Actually put the image on the screen.
