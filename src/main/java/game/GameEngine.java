@@ -14,20 +14,21 @@ public class GameEngine {
     private final GameState gameState;
     private final int spawnTimer;
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private SynchronousQueue<Boolean> endGameNotificationQueue = new SynchronousQueue<>();
 
     public GameEngine(GameState gameState, Logger logger, int spawnTimer) {
         this.logger = logger;
         this.robotFactory = new RobotFactory();
         this.spawnTimer = spawnTimer;
         this.gameState = gameState;
-        gameState.attachQueue(endGameNotificationQueue);
+        gameState.attachEndGameListener(() -> {
+            endGame();
+        });
     }
 
     public void startGame() {
         executor.execute(robotFactory);
         executor.execute(this::spawnRobotAtNextValidSpawnPosition);
-        executor.execute(this::waitForEndGameNotification);
+        executor.execute(this::scoreOverTimeCounter);
     }
 
     public void spawnRobotAtNextValidSpawnPosition() {
@@ -45,19 +46,28 @@ public class GameEngine {
                 }
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Spawning stopped");
         }
     }
 
-    private void waitForEndGameNotification() {
+    private void scoreOverTimeCounter() {
         try {
-            if(endGameNotificationQueue.take()) {
-                logger.log("GAME OVER");
-                executor.shutdownNow();
-                //TODO: CLEANUP THREADS NICELY
+            while (!gameState.isGameFinished()) {
+                Thread.sleep(1000);
+                int score = gameState.getScore() + 10;
+                gameState.setScore(score);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Score Counter Stopped");
         }
+    }
+
+    private void endGame() {
+        logger.log("\n====================");
+        logger.log("\n\tGAME OVER");
+        logger.log("\n\tFinal Score: " + String.valueOf(gameState.getScore()));
+        logger.log("\n====================");
+        //TODO: CLEANUP THREADS NICELY
+        executor.shutdownNow();
     }
 }

@@ -33,7 +33,8 @@ public class JFXArena extends Pane
     private double gridSquareSize; // Auto-calculated
     private Canvas canvas; // Used to provide a 'drawing surface'.
 
-    private List<ArenaListener> listeners = null;
+    private List<ArenaListener> arenaListeners = null;
+    private ScoreListener scoreListener = null;
     
     /**
      * Creates a new arena object, loading the robot image and initialising a drawing surface.
@@ -68,26 +69,16 @@ public class JFXArena extends Pane
         getChildren().add(canvas);
     }
     
-    
-    /**
-     * Moves a robot image to a new grid position. This is highly rudimentary, as you will need
-     * many different robots in practice. This method currently just serves as a demonstration.
-     */
-    public void setRobotPosition(double x, double y)
-    {
-        requestLayout();
-    }
-    
     /**
      * Adds a callback for when the user clicks on a grid square within the arena. The callback 
      * (of type ui.ArenaListener) receives the grid (x,y) coordinates as parameters to the
      * 'squareClicked()' method.
      */
-    public void addListener(ArenaListener newListener)
+    public void addClickListener(ArenaListener newListener)
     {
-        if(listeners == null)
+        if(arenaListeners == null)
         {
-            listeners = new LinkedList<>();
+            arenaListeners = new LinkedList<>();
             setOnMouseClicked(event ->
             {
                 int gridX = (int)(event.getX() / gridSquareSize);
@@ -95,14 +86,22 @@ public class JFXArena extends Pane
                 
                 if(gridX < gridWidth && gridY < gridHeight)
                 {
-                    for(ArenaListener listener : listeners)
+                    for(ArenaListener listener : arenaListeners)
                     {   
                         listener.squareClicked(gridX, gridY);
                     }
                 }
             });
         }
-        listeners.add(newListener);
+        arenaListeners.add(newListener);
+    }
+
+    public void addScoreUpdateListener(ScoreListener newListener) {
+        scoreListener = newListener;
+    }
+
+    public void updateScoreLabel(int score) {
+        scoreListener.scoreUpdated(score);
     }
         
         
@@ -149,6 +148,7 @@ public class JFXArena extends Pane
 
         // Invoke helper methods to draw things at the current location.
         // ** You will need to adapt this to the requirements of your application. **
+        drawImage(gfx,cityImage,centreX,centreY);
         for (Map.Entry<String, Robot> entry : robotRepo.entrySet()) {
             Robot robot = entry.getValue();
             String robotId = robot.getRobotId();
@@ -157,7 +157,6 @@ public class JFXArena extends Pane
             drawImage(gfx,robotImage,robotX ,robotY);
             drawLabel(gfx,robotId,robotX,robotY);
         }
-        drawImage(gfx,cityImage,centreX,centreY);
     }
     
     

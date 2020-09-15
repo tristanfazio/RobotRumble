@@ -16,15 +16,18 @@ public class GameState {
     JFXArena arena;
     final Object lock = new Object();
     private SynchronousQueue<Boolean> endGameNotificationQueue = new SynchronousQueue<>();
+    private int gameScore;
+    private EndGameListener endGameListener = null;
 
     public GameState(GameMap gameMap, JFXArena arena){
         this.isGameFinished = false;
         this.gameMap = gameMap;
         robotRepo = new HashMap<>();
         this.arena = arena;
+        gameScore = 0;
     }
-    public void attachQueue(SynchronousQueue<Boolean> notificationQueue) {
-        this.endGameNotificationQueue = notificationQueue;
+    public void attachEndGameListener(EndGameListener endGameListener) {
+        this.endGameListener = endGameListener;
     }
 
     public boolean isGameFinished() {
@@ -72,11 +75,7 @@ public class GameState {
         synchronized (lock) {
             if(gameMap.isCentralSquareOccupied()) {
                 isGameFinished = true;
-                try {
-                    endGameNotificationQueue.put(Boolean.TRUE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                endGameListener.endGame();
             }
         }
     }
@@ -95,5 +94,23 @@ public class GameState {
                 arena.updateRobotInfo(robotRepo);
             }
         });
+    }
+
+    public int getScore() {
+        synchronized (lock) {
+            return gameScore;
+        }
+    }
+
+    public void setScore(int gameScore) {
+        synchronized (lock) {
+            this.gameScore = gameScore;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    arena.updateScoreLabel(gameScore);
+                }
+            });
+        }
     }
 }

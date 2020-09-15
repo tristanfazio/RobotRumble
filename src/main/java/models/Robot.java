@@ -78,7 +78,7 @@ public class Robot implements Runnable{
                 attemptMove();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Robot:" + robotId + " shutdown");
         }
     }
 

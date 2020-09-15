@@ -1,3 +1,5 @@
+package ui;
+
 import game.GameEngine;
 import game.GameState;
 import javafx.application.Application;
@@ -31,13 +33,19 @@ public class UI extends Application
         GameState gameState = new GameState(gameMap,arena);
         GameEngine gameEngine = new GameEngine(gameState,logger,SPAWNTIMER);
 
-        arena.addListener((x, y) ->
+        Label label = new Label("Score: 0");
+        Button startButton = new Button("Start Game");
+
+        arena.addClickListener((x, y) ->
         {
             System.out.println("Arena click at (" + x + "," + y + ")");
         });
+        arena.addScoreUpdateListener((score) ->
+        {
+            label.setText("Score: " + score);
+        });
 
-        Label label = new Label("Score: 0");
-        Button startButton = new Button("Start Game");
+
 
         startButton.setOnAction((event) ->
         {
