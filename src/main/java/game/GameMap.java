@@ -123,5 +123,11 @@ public class GameMap {
     public boolean isCentralSquareOccupied() {
         return isPositionOccupied(CENTRE);
     }
+
+    public Robot getRobotFromPosition(GridPosition firingPosition) {
+        int gridX = firingPosition.getGridX();
+        int gridY = firingPosition.getGridY();
+        return gameMap[gridX][gridY].getOccupant();
+    }
 }
 

@@ -20,7 +20,7 @@ public class GameState {
     private EndGameListener endGameListener = null;
 
     public GameState(GameMap gameMap, JFXArena arena){
-        this.isGameFinished = false;
+        this.isGameFinished = true;
         this.gameMap = gameMap;
         robotRepo = new HashMap<>();
         this.arena = arena;
@@ -28,6 +28,10 @@ public class GameState {
     }
     public void attachEndGameListener(EndGameListener endGameListener) {
         this.endGameListener = endGameListener;
+    }
+
+    public void setGameStart() {
+        isGameFinished = false;
     }
 
     public boolean isGameFinished() {
@@ -57,17 +61,19 @@ public class GameState {
 
     public void handleRobotMovementToNewPosition(Robot robot, GridPosition newGridPosition) {
         synchronized (lock) {
-            //get old position out of robot
-            GridPosition oldPosition = robot.gridPosition();
-            //set new position to occupied
-            robot.setGridPosition(newGridPosition);
-            gameMap.moveRobotIntoPosition(robot);
-            //update visuals with movement
-            updateRobotRepo(robot);
-            //unOccupy old position
-            gameMap.moveRobotOutOfOldPosition(oldPosition);
-            //checkLose
-            checkLoseCondition();
+            if(robot.isAlive()) {
+                //get old position out of robot
+                GridPosition oldPosition = robot.gridPosition();
+                //set new position to occupied
+                robot.setGridPosition(newGridPosition);
+                gameMap.moveRobotIntoPosition(robot);
+                //update visuals with movement
+                updateRobotRepo(robot);
+                //unOccupy old position
+                gameMap.moveRobotOutOfOldPosition(oldPosition);
+                //checkLose
+                checkLoseCondition();
+            }
         }
     }
 
@@ -109,6 +115,30 @@ public class GameState {
                 @Override
                 public void run() {
                     arena.updateScoreLabel(gameScore);
+                }
+            });
+        }
+    }
+
+    public boolean isRobotInGridPosition(GridPosition firingPosition) {
+        synchronized (lock) {
+            return gameMap.isPositionOccupied(firingPosition);
+        }
+    }
+
+    public Robot getRobotFromPosition(GridPosition firingPosition) {
+        synchronized (lock) {
+            return gameMap.getRobotFromPosition(firingPosition);
+        }
+    }
+
+    public void removeRobotFromRepo(String robotId) {
+        synchronized (lock) {
+            robotRepo.remove(robotId);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    arena.updateRobotInfo(robotRepo);
                 }
             });
         }

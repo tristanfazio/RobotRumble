@@ -83,4 +83,8 @@ public class Robot implements Runnable{
     }
 
 
+    public void kill() {
+        isAlive = false;
+        gameState.removeRobotFromRepo(robotId);
+    }
 }

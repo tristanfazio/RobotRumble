@@ -23,8 +23,8 @@ public class UI extends Application
     {
         stage.setTitle("Robot Rumble");
         int SPAWNTIMER = 2000;
-        int GRIDWIDTH = 9;
-        int GRIDHEIGHT = 9;
+        int GRIDWIDTH = 13;
+        int GRIDHEIGHT = 13;
         ToolBar toolbar = new ToolBar();
         JFXArena arena = new JFXArena(GRIDWIDTH,GRIDHEIGHT);
         TextArea textArea = new TextArea();
@@ -38,6 +38,7 @@ public class UI extends Application
 
         arena.addClickListener((x, y) ->
         {
+            gameEngine.passFiringCoords(x,y,System.currentTimeMillis());
             System.out.println("Arena click at (" + x + "," + y + ")");
         });
         arena.addScoreUpdateListener((score) ->
