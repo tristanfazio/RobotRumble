@@ -27,20 +27,21 @@ public class GameEngine {
     }
 
     public void startGame() {
-        if(!gameState.isGameFinished()) return; //guard to stop multiple starts
-
         try {
-            Thread.sleep(1000); // initial wait to give player time to react
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        executor = Executors.newCachedThreadPool();
-        gameState.setGameStart();
+            if(!gameState.isGameFinished()) return; //guard to stop multiple starts
 
-        executor.execute(robotFactory);
-        executor.execute(this::spawnRobotAtNextValidSpawnPosition);
-        executor.execute(this::firingMechanism);
-        executor.execute(this::scoreOverTimeCounter);
+            Thread.sleep(1000); // initial wait to give player time to react
+
+            executor = Executors.newCachedThreadPool();
+            gameState.setGameStart();
+
+            executor.execute(robotFactory);
+            executor.execute(this::spawnRobotAtNextValidSpawnPosition);
+            executor.execute(this::firingMechanism);
+            executor.execute(this::scoreOverTimeCounter);
+        } catch (InterruptedException e) {
+            System.out.println("Game Engine Interrupted, shutting down");
+        }
     }
 
     private void firingMechanism() {
@@ -114,15 +115,17 @@ public class GameEngine {
     }
 
     public void passFiringCoords(int x, int y, long fireTime) {
-        if(!gameState.isGameFinished()){
-            GridPosition gridPosition = new GridPosition(x,y);
-            FireCommand fireCommand = new FireCommand(gridPosition,fireTime);
-            logger.log("Player Fired: " + gridPosition.toString());
-            try {
-                firingQueue.put(fireCommand);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            if(!gameState.isGameFinished()){
+                GridPosition gridPosition = new GridPosition(x,y);
+                FireCommand fireCommand = new FireCommand(gridPosition,fireTime);
+                logger.log("Player Fired: " + gridPosition.toString());
+
+                    firingQueue.put(fireCommand);
+
             }
+        } catch (InterruptedException e) {
+            System.out.println("Firing command queue Interrupted");
         }
     }
 }

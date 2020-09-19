@@ -83,10 +83,12 @@ public class GameState {
 
     public void updateRobotRepo(Robot robot) {
         robotRepo.put(robot.getRobotId(),robot);
+        HashMap<String,Robot> drawableRepo = new HashMap<>();
+        robotRepo.forEach(drawableRepo::put);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                arena.updateRobotInfo(robotRepo);
+                arena.updateRobotInfo(drawableRepo);
             }
         });
     }
@@ -124,10 +126,12 @@ public class GameState {
     public void removeRobotFromRepo(String robotId) {
         synchronized (lock) {
             robotRepo.remove(robotId);
+            HashMap<String,Robot> drawableRepo = new HashMap<>();
+            robotRepo.forEach(drawableRepo::put);
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    arena.updateRobotInfo(robotRepo);
+                    arena.updateRobotInfo(drawableRepo);
                 }
             });
         }

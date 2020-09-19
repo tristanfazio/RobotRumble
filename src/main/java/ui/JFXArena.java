@@ -35,7 +35,8 @@ public class JFXArena extends Pane
 
     private List<ArenaListener> arenaListeners = null;
     private ScoreListener scoreListener = null;
-    
+    private final Object lock = new Object();
+
     /**
      * Creates a new arena object, loading the robot image and initialising a drawing surface.
      */
@@ -249,7 +250,9 @@ public class JFXArena extends Pane
     }
 
     public void updateRobotInfo(HashMap<String,Robot> robotRepo) {
-        this.robotRepo = robotRepo;
-        layoutChildren();
+        synchronized (lock) {
+            this.robotRepo = robotRepo;
+            layoutChildren();
+        }
     }
 }

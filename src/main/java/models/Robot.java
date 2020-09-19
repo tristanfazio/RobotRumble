@@ -55,38 +55,34 @@ public class Robot implements Runnable{
         this.gameState = gameState;
     }
 
-    private void attemptMove() {
-        try {
-            ArrayList<GridPosition> validMoves = gameState.getValidMoveListFromPosition(gridPosition);
-            if(validMoves.size()>0 && isAlive) {
-                //get old position
-                GridPosition oldPosition = gridPosition();
-                //get new position
-                int index = randomGenerator.nextInt(validMoves.size());
-                GridPosition newGridPosition = validMoves.get(index);
-                newGridPosition.setAnimationX(oldPosition.getGridX());
-                newGridPosition.setAnimationY(oldPosition.getGridY());
-                //occupy the new position
+    private void attemptMove() throws InterruptedException {
+        ArrayList<GridPosition> validMoves = gameState.getValidMoveListFromPosition(gridPosition);
+        if(validMoves.size()>0 && isAlive) {
+            //get old position
+            GridPosition oldPosition = gridPosition();
+            //get new position
+            int index = randomGenerator.nextInt(validMoves.size());
+            GridPosition newGridPosition = validMoves.get(index);
+            newGridPosition.setAnimationX(oldPosition.getGridX());
+            newGridPosition.setAnimationY(oldPosition.getGridY());
+            //occupy the new position
+            setGridPosition(newGridPosition);
+            gameState.moveRobotIntoPosition(this);
+            //animate movement over 50milli increments, 10x50=500 milli total animation time
+            for(int i = 0;i<10;i++){
+
+                if(oldPosition.getGridX() < newGridPosition.getGridX())newGridPosition.incrementAnimationX();
+                if(oldPosition.getGridX() > newGridPosition.getGridX())newGridPosition.decrementAnimationX();
+                if(oldPosition.getGridY() < newGridPosition.getGridY())newGridPosition.incrementAnimationY();
+                if(oldPosition.getGridY() > newGridPosition.getGridY())newGridPosition.decrementAnimationY();
+
                 setGridPosition(newGridPosition);
-                gameState.moveRobotIntoPosition(this);
-                //animate movement over 50milli increments, 10x50=500 milli total animation time
-                for(int i = 0;i<10;i++){
+                if(isAlive)gameState.handleRobotMovementToNewPosition(this);
 
-                    if(oldPosition.getGridX() < newGridPosition.getGridX())newGridPosition.incrementAnimationX();
-                    if(oldPosition.getGridX() > newGridPosition.getGridX())newGridPosition.decrementAnimationX();
-                    if(oldPosition.getGridY() < newGridPosition.getGridY())newGridPosition.incrementAnimationY();
-                    if(oldPosition.getGridY() > newGridPosition.getGridY())newGridPosition.decrementAnimationY();
-
-                    setGridPosition(newGridPosition);
-                    gameState.handleRobotMovementToNewPosition(this);
-
-                    Thread.sleep(50);
-                }
-                //unoccupy old position
-                gameState.moveRobotOutOfOldPosition(oldPosition);
+                Thread.sleep(50);
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            //unoccupy old position
+            gameState.moveRobotOutOfOldPosition(oldPosition);
         }
     }
 

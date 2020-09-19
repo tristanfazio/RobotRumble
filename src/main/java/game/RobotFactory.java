@@ -23,7 +23,7 @@ public class RobotFactory implements Runnable{
                 idCounter++;
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Robot Factory Interrupted, shutting down");
         }
     }
 
