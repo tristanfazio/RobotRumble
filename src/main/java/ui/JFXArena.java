@@ -152,8 +152,8 @@ public class JFXArena extends Pane
         for (Map.Entry<String, Robot> entry : robotRepo.entrySet()) {
             Robot robot = entry.getValue();
             String robotId = robot.getRobotId();
-            int robotX = robot.gridPosition().getGridX();
-            int robotY = robot.gridPosition().getGridY();
+            double robotX = robot.gridPosition().getAnimationX();
+            double robotY = robot.gridPosition().getAnimationY();
             drawImage(gfx,robotImage,robotX ,robotY);
             drawLabel(gfx,robotId,robotX,robotY);
         }

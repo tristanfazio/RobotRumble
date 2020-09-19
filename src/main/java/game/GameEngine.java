@@ -107,12 +107,12 @@ public class GameEngine {
     }
 
     private void endGame() {
+        executor.shutdownNow();
         logger.log("\n====================");
         logger.log("\n\tGAME OVER");
         logger.log("\n\tFinal Score: " + String.valueOf(gameState.getScore()));
         logger.log("\n====================");
         //TODO: CLEANUP THREADS NICELY
-        executor.shutdownNow();
     }
 
     public void passFiringCoords(int x, int y, long fireTime) {

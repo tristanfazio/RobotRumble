@@ -59,21 +59,11 @@ public class GameState {
         }
     }
 
-    public void handleRobotMovementToNewPosition(Robot robot, GridPosition newGridPosition) {
+    public void handleRobotMovementToNewPosition(Robot robot) {
         synchronized (lock) {
-            if(robot.isAlive()) {
-                //get old position out of robot
-                GridPosition oldPosition = robot.gridPosition();
-                //set new position to occupied
-                robot.setGridPosition(newGridPosition);
-                gameMap.moveRobotIntoPosition(robot);
-                //update visuals with movement
-                updateRobotRepo(robot);
-                //unOccupy old position
-                gameMap.moveRobotOutOfOldPosition(oldPosition);
-                //checkLose
-                checkLoseCondition();
-            }
+            //update visuals with movement
+            updateRobotRepo(robot);
+            //checkLose
         }
     }
 
@@ -92,7 +82,7 @@ public class GameState {
         }
     }
 
-    private void updateRobotRepo(Robot robot) {
+    public void updateRobotRepo(Robot robot) {
         robotRepo.put(robot.getRobotId(),robot);
         Platform.runLater(new Runnable() {
             @Override
@@ -141,6 +131,19 @@ public class GameState {
                     arena.updateRobotInfo(robotRepo);
                 }
             });
+        }
+    }
+
+    public void moveRobotIntoPosition(Robot robot) {
+        synchronized (lock) {
+            gameMap.moveRobotIntoPosition(robot);
+        }
+    }
+
+    public void moveRobotOutOfOldPosition(GridPosition oldPosition) {
+        synchronized (lock) {
+            gameMap.moveRobotOutOfOldPosition(oldPosition);
+            checkLoseCondition();
         }
     }
 }

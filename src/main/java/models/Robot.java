@@ -15,6 +15,7 @@ public class Robot implements Runnable{
     private GridPosition gridPosition;
     GameState gameState;
     private boolean isAlive;
+    Random randomGenerator = new Random();
 
     public Robot(String robotId) {
         this.robotId = robotId;
@@ -55,12 +56,41 @@ public class Robot implements Runnable{
     }
 
     private void attemptMove() {
-        ArrayList<GridPosition> validMoves = gameState.getValidMoveListFromPosition(gridPosition);
-        if(validMoves.size()>0) {
-            Random randomGenerator = new Random();
-            int index = randomGenerator.nextInt(validMoves.size());
-            GridPosition newGridPosition = validMoves.get(index);
-            gameState.handleRobotMovementToNewPosition(this,newGridPosition);
+        try {
+            ArrayList<GridPosition> validMoves = gameState.getValidMoveListFromPosition(gridPosition);
+            if(validMoves.size()>0 && isAlive) {
+                //get old position
+                GridPosition oldPosition = gridPosition();
+                //get new position
+                int index = randomGenerator.nextInt(validMoves.size());
+                GridPosition newGridPosition = validMoves.get(index);
+                newGridPosition.setAnimationX(oldPosition.getGridX());
+                newGridPosition.setAnimationY(oldPosition.getGridY());
+                //occupy the new position
+                setGridPosition(newGridPosition);
+                gameState.moveRobotIntoPosition(this);
+                //animate movement over 50milli increments, 10x50=500 milli total animation time
+                for(int i = 0;i<10;i++){
+
+                    if(oldPosition.getGridX() < newGridPosition.getGridX())newGridPosition.incrementAnimationX();
+                    if(oldPosition.getGridX() > newGridPosition.getGridX())newGridPosition.decrementAnimationX();
+                    if(oldPosition.getGridY() < newGridPosition.getGridY())newGridPosition.incrementAnimationY();
+                    if(oldPosition.getGridY() > newGridPosition.getGridY())newGridPosition.decrementAnimationY();
+
+                    setGridPosition(newGridPosition);
+
+                    //if over halfway occupy new square
+                    gameState.handleRobotMovementToNewPosition(this);
+
+
+                    Thread.sleep(50);
+
+                }
+                //unoccupy old position
+                gameState.moveRobotOutOfOldPosition(oldPosition);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
