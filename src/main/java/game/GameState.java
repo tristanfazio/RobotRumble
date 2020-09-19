@@ -15,7 +15,6 @@ public class GameState {
     private final HashMap<String, Robot> robotRepo;
     JFXArena arena;
     final Object lock = new Object();
-    private SynchronousQueue<Boolean> endGameNotificationQueue = new SynchronousQueue<>();
     private int gameScore;
     private EndGameListener endGameListener = null;
 

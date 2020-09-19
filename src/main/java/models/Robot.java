@@ -78,13 +78,9 @@ public class Robot implements Runnable{
                     if(oldPosition.getGridY() > newGridPosition.getGridY())newGridPosition.decrementAnimationY();
 
                     setGridPosition(newGridPosition);
-
-                    //if over halfway occupy new square
                     gameState.handleRobotMovementToNewPosition(this);
 
-
                     Thread.sleep(50);
-
                 }
                 //unoccupy old position
                 gameState.moveRobotOutOfOldPosition(oldPosition);

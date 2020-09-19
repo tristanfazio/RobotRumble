@@ -15,7 +15,7 @@ public class GameEngine {
     private final GameState gameState;
     private final int spawnTimer;
     private ExecutorService executor;
-    private BlockingQueue<FireCommand> firingQueue;
+    private final BlockingQueue<FireCommand> firingQueue;
 
     public GameEngine(GameState gameState, Logger logger, int spawnTimer) {
         this.logger = logger;
@@ -23,9 +23,7 @@ public class GameEngine {
         this.spawnTimer = spawnTimer;
         this.gameState = gameState;
         firingQueue = new LinkedBlockingQueue<>();
-        gameState.attachEndGameListener(() -> {
-            endGame();
-        });
+        gameState.attachEndGameListener(this::endGame);
     }
 
     public void startGame() {
@@ -70,8 +68,8 @@ public class GameEngine {
                 }
             }
         } catch (InterruptedException e) {
-        System.out.println("Firing Mechanism stopped");
-    }
+                System.out.println("Firing Mechanism stopped");
+        }
     }
 
     public void spawnRobotAtNextValidSpawnPosition() {
