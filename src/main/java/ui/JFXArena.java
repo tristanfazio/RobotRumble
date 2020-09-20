@@ -150,13 +150,15 @@ public class JFXArena extends Pane
         // Invoke helper methods to draw things at the current location.
         // ** You will need to adapt this to the requirements of your application. **
         drawImage(gfx,cityImage,centreX,centreY);
-        for (Map.Entry<String, Robot> entry : robotRepo.entrySet()) {
-            Robot robot = entry.getValue();
-            String robotId = robot.getRobotId();
-            double robotX = robot.gridPosition().getAnimationX();
-            double robotY = robot.gridPosition().getAnimationY();
-            drawImage(gfx,robotImage,robotX ,robotY);
-            drawLabel(gfx,robotId,robotX,robotY);
+        synchronized (lock) {
+            for (Map.Entry<String, Robot> entry : robotRepo.entrySet()) {
+                Robot robot = entry.getValue();
+                String robotId = robot.getRobotId();
+                double robotX = robot.gridPosition().getAnimationX();
+                double robotY = robot.gridPosition().getAnimationY();
+                drawImage(gfx,robotImage,robotX ,robotY);
+                drawLabel(gfx,robotId,robotX,robotY);
+            }
         }
     }
     
